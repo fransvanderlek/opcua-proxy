@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Configures the Camel Context-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+       
+   	<bean id="milo-server"
+		class="org.apache.camel.component.milo.server.MiloServerComponent">
+		<property name="enableAnonymousAuthentication" value="true" />
+		<property name="port" value="12685"/>
+		<property name="bindAddresses" value="0.0.0.0"/>
+		<property name="applicationName" value="camel-opcua"/>
+	</bean>    
+     
+
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+		<!--
+		
+		<from uri="timer:test" />
+			<setBody>
+				<simple>${random(0,100)}</simple>
+			</setBody>
+		<to uri="milo-server:test-item" />
+		-->
+		
+
+<!-- Simple connect from milo server online -->
+
+
+		
+		<from uri="milo-client:opc.tcp://milo.digitalpetri.com:62541/milo?node=RAW(ns=2;s=Dynamic/RandomDouble)&amp;samplingInterval=100&amp;allowedSecurityPolicies=None" />
+        <log message="${body}" />
+        <to uri="milo-server:my-item" /> 
+
+  
+       
+        <!-- Arduino OPC UA connect. -->
+        <!--
+    
+		<from uri="milo-client:opc.tcp://192.168.1.201:4840?node=RAW(ns=1;s=temperature)&amp;samplingInterval=100&amp;allowedSecurityPolicies=None" />
+        <log message="${body.value}" /> 
+        
+        -->
+    </route>
+  </camelContext>
+
+</beans>
