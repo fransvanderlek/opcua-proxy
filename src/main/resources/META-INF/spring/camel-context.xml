@@ -13,19 +13,42 @@
 		<property name="port" value="12685"/>
 		<property name="bindAddresses" value="0.0.0.0"/>
 		<property name="applicationName" value="camel-opcua"/>
-	</bean>    
-     
+	</bean>   
+	
+	<bean id="gson" class="org.apache.camel.component.gson.GsonDataFormat">
+        <!-- we want to unmarshal to person pojo -->
+        <property name="unmarshalType" value="org.eclipse.milo.opcua.stack.core.types.builtin.DataValue"/>
+   
+    </bean> 
+	     
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
 				
 
+
+
 <!-- Simple connect from milo server online -->
 
-		<from uri="milo-client:opc.tcp://milo.digitalpetri.com:62541/milo?node=RAW(ns=2;s=Dynamic/RandomDouble)&amp;samplingInterval=100&amp;allowedSecurityPolicies=None" />
-        <log message="${body}" />
-        <to uri="milo-server:my-item" /> 
 
+		<from uri="milo-client:opc.tcp://milo.digitalpetri.com:62541/milo?node=RAW(ns=2;s=Dynamic/RandomDouble)&amp;samplingInterval=100&amp;allowedSecurityPolicies=None" />
+       <!-- <log message="${body}" /> -->
+       <convertBodyTo type="java.lang.String"/>
+        <to uri="paho:IntelligentIndustryExperience/robot2/status?brokerUrl=tcp://test.mosquitto.org:1883"/>
+</route>
+
+<route>
+
+	<from uri="paho:IntelligentIndustryExperience/robot2/status?brokerUrl=tcp://test.mosquitto.org:1883"/>
+   <log message="${body}" />
+   <convertBodyTo type="java.lang.String"/>
+   <unmarshal><custom ref="gson"/></unmarshal>
+   <to uri="milo-server:my-item" /> 
+  
+<!--
+
+        <to uri="milo-server:my-item" /> 
+-->
     </route>
   </camelContext>
 
