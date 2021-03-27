@@ -18,33 +18,14 @@
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
-		<!--
-		
-		<from uri="timer:test" />
-			<setBody>
-				<simple>${random(0,100)}</simple>
-			</setBody>
-		<to uri="milo-server:test-item" />
-		-->
-		
+				
 
 <!-- Simple connect from milo server online -->
 
-
-		
 		<from uri="milo-client:opc.tcp://milo.digitalpetri.com:62541/milo?node=RAW(ns=2;s=Dynamic/RandomDouble)&amp;samplingInterval=100&amp;allowedSecurityPolicies=None" />
         <log message="${body}" />
         <to uri="milo-server:my-item" /> 
 
-  
-       
-        <!-- Arduino OPC UA connect. -->
-        <!--
-    
-		<from uri="milo-client:opc.tcp://192.168.1.201:4840?node=RAW(ns=1;s=temperature)&amp;samplingInterval=100&amp;allowedSecurityPolicies=None" />
-        <log message="${body.value}" /> 
-        
-        -->
     </route>
   </camelContext>
 
