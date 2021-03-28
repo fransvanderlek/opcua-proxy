@@ -4,7 +4,8 @@
 <!--
 
 Some ideas to improve:
-- leverage UANodeSet: export a UANodeSet from the source server and import in replica server, see also:https://github.com/digitalpetri/opc-ua-nodeset-parser. This likely requires instantiating a OPCUA server seperately from camel, see also: https://github.com/eclipse/milo/blob/master/milo-examples/server-examples/src/main/java/org/eclipse/milo/examples/server/ExampleServer.java. Spring bean?
+- leverage UANodeSet: export a UANodeSet from the source server and import in replica server, see also:https://github.com/digitalpetri/opc-ua-nodeset-parser. This likely requires instantiating a OPCUA server seperately from camel, see also: https://github.com/eclipse/milo/blob/master/milo-examples/server-examples/src/main/java/org/eclipse/milo/examples/server/ExampleServer.java. Spring bean? or change camel 
+implementationhttps://github.com/apache/camel/blob/b63b6d0f79c921827b89b4e875a8196512404a49/components/camel-milo/src/main/java/org/apache/camel/component/milo/server/internal/CamelNamespace.java#L52
 - abstract mqtt brokerUrl, milo client url, etc. possibly introduce properties file or extra beans
 - make node-id part of mqtt message, simplifying the topic structure
 - make milo server component more generic, not needing itemId, see https://github.com/apache/camel/blob/b63b6d0f79c921827b89b4e875a8196512404a49/components/camel-milo/src/main/java/org/apache/camel/component/milo/server/MiloServerConsumer.java#L56, perhaps with a more facade CamelServerItem https://github.com/apache/camel/blob/b63b6d0f79c921827b89b4e875a8196512404a49/components/camel-milo/src/main/java/org/apache/camel/component/milo/server/MiloServerEndpoint.java#L80
