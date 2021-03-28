@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Configures the Camel Context-->
+
+<!-- Using Camel as a OPCUA proxy via MQTT -->
+<!--
+
+Some ideas to improve:
+- leverage UANodeSet: export a UANodeSet from the source server and import in replica server, see also:https://github.com/digitalpetri/opc-ua-nodeset-parser. This likely requires instantiating a OPCUA server seperately from camel, see also: https://github.com/eclipse/milo/blob/master/milo-examples/server-examples/src/main/java/org/eclipse/milo/examples/server/ExampleServer.java. Spring bean?
+- abstract mqtt brokerUrl, milo client url, etc. possibly introduce properties file or extra beans
+- make node-id part of mqtt message, simplifying the topic structure
+- make milo server component more generic, not needing itemId, see https://github.com/apache/camel/blob/b63b6d0f79c921827b89b4e875a8196512404a49/components/camel-milo/src/main/java/org/apache/camel/component/milo/server/MiloServerConsumer.java#L56, perhaps with a more facade CamelServerItem https://github.com/apache/camel/blob/b63b6d0f79c921827b89b4e875a8196512404a49/components/camel-milo/src/main/java/org/apache/camel/component/milo/server/MiloServerEndpoint.java#L80
+
+-->
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -22,7 +32,6 @@
         <property name="unmarshalType" value="org.eclipse.milo.opcua.stack.core.types.builtin.DataValue"/>   
     </bean>
      
-
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
 
    	    <!-- ############################## -->
