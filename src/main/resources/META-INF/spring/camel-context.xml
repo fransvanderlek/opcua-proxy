@@ -24,19 +24,51 @@
      
 
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
-    	
-    	<route id="opcua_source-to-broker">
-			<from uri="milo-client:opc.tcp://192.168.1.201:4840?node=RAW(ns=1;s=Control Relay number 0.)&amp;samplingInterval=1000&amp;allowedSecurityPolicies=None" />
-       			<!-- <log message="${body}" /> -->
+
+   	    <!-- ############################## -->
+		<!-- #        TEMPERATURE         # -->
+		<!-- ############################## -->	
+		
+		<!-- SOURCE_TO_REPLICA -->
+ 
+	
+	    <route id="opcua_source_temperature-to-broker">
+			<from uri="milo-client:opc.tcp://192.168.1.201:4840?node=RAW(ns=1;s=temperature)&amp;samplingInterval=1000&amp;allowedSecurityPolicies=None" />
        			<marshal>
        				<custom ref="gson"/>
        			</marshal>
        			<convertBodyTo type="java.lang.String"/>
-        	<to uri="paho:IntelligentIndustryExperience/robot2/status?brokerUrl=tcp://test.mosquitto.org:1883"/>
+        	<to uri="paho:IntelligentIndustryExperience/device-1/temperature/status?brokerUrl=tcp://test.mosquitto.org:1883"/>
 		</route>
 		
-		<route id="broker-to-opcua_replica">
-			<from uri="paho:IntelligentIndustryExperience/robot2/status?brokerUrl=tcp://test.mosquitto.org:1883"/>
+		<route id="broker-to-opcua_replica_temperature">
+			<from uri="paho:IntelligentIndustryExperience/device-1/temperature/status?brokerUrl=tcp://test.mosquitto.org:1883"/>
+   				<convertBodyTo type="java.lang.String"/>
+   				<unmarshal>
+   					<custom ref="gson"/>
+   				</unmarshal>
+      			<log message="${body}" />
+    		<to uri="opcua-server:temperature" />
+    	</route>
+    	
+    	<!-- ############################## -->
+		<!-- #           LED              # -->
+		<!-- ############################## -->	
+		
+		<!-- SOURCE_TO_REPLICA -->
+    	
+    	<route id="opcua_source_led-to-broker">
+			<from uri="milo-client:opc.tcp://192.168.1.201:4840?node=RAW(ns=1;s=Control Relay number 0.)&amp;samplingInterval=1000&amp;allowedSecurityPolicies=None" />
+       			<marshal>
+       				<custom ref="gson"/>
+       			</marshal>
+       			<convertBodyTo type="java.lang.String"/>
+        	<to uri="paho:IntelligentIndustryExperience/device-1/led/status?brokerUrl=tcp://test.mosquitto.org:1883"/>
+		</route>
+			
+		
+		<route id="broker-to-opcua_replica_led">
+			<from uri="paho:IntelligentIndustryExperience/device-1/led/status?brokerUrl=tcp://test.mosquitto.org:1883"/>
    				<convertBodyTo type="java.lang.String"/>
    				<unmarshal>
    					<custom ref="gson"/>
@@ -44,19 +76,23 @@
       			<log message="${body}" />
     		<to uri="opcua-server:led" />
     	</route>
+    	
+    	<!-- REPLICA_TO_SOURCE -->
 
-		<route id="opcua_replica-to-mqtt">
+		<route id="opcua_replica_led-to-mqtt">
+		
+			<!-- the itemId in the uri should match the one being updated in the replication routes-->
 			<from uri="opcua-server:led"/>
       			<marshal>
        				<custom ref="gson"/>
        			</marshal>
        			<convertBodyTo type="java.lang.String"/>
    			<to uri="log:intelligentindustry?level=INFO"/>
-        	<to uri="paho:IntelligentIndustryExperience/robot2/command?brokerUrl=tcp://test.mosquitto.org:1883"/> 	
+        	<to uri="paho:IntelligentIndustryExperience/device-1/led/command?brokerUrl=tcp://test.mosquitto.org:1883"/> 	
     	</route>
     	
-		<route id="broker-to-opcua_source">
-			<from uri="paho:IntelligentIndustryExperience/robot2/command?brokerUrl=tcp://test.mosquitto.org:1883"/>
+		<route id="broker-to-opcua_source_led">
+			<from uri="paho:IntelligentIndustryExperience/device-1/led/command?brokerUrl=tcp://test.mosquitto.org:1883"/>
    				<convertBodyTo type="java.lang.String"/>
    				<unmarshal>
    					<custom ref="gson"/>
