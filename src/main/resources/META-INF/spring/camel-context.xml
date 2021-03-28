@@ -24,10 +24,9 @@
      
 
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
-    	
+    	<!--
     	<route id="opcua_source-to-broker">
 			<from uri="milo-client:opc.tcp://milo.digitalpetri.com:62541/milo?node=RAW(ns=2;s=Dynamic/RandomDouble)&amp;samplingInterval=100&amp;allowedSecurityPolicies=None" />
-       			<!-- <log message="${body}" /> -->
        			<marshal>
        				<custom ref="gson"/>
        			</marshal>
@@ -41,10 +40,32 @@
    				<unmarshal>
    					<custom ref="gson"/>
    				</unmarshal>
-      			<log message="${body}" />
+      		
     		<to uri="opcua-server:Dynamic/RandomDouble" />
+    	</route> 
+    	
+    	-->
+    	
+    	<route id="opcua_replica-init">
+  			<from uri="timer://runOnce?repeatCount=1&amp;delay=2000"/>
+  				<setBody>
+    				<simple>{"value":{"value":2.0},"status":{"value":0},"sourceTime":{"utcTime":132614086977603640},"serverTime":{"utcTime":132614086977603640}}</simple>
+  				</setBody>
+				<unmarshal>
+   					<custom ref="gson"/>
+   				</unmarshal>
+  			<to uri="log:intelligentindustry?level=INFO"/>	
+ 			<to uri="opcua-server:some-item"/>
+ 
+  <!--			<to uri="milo-client:opc.tcp://localhost:12685?node=RAW(ns=2;s=some-item)"/> -->
+   		</route>
+       	
+    	<route id="opcua_replica-to-log">
+			<from uri="opcua-server:some-item"/>
+   			<to uri="log:intelligentindustry?level=INFO"/>
+   			<to uri="opcua-server:some-item"/> <!-- adding this 'to' clause causes the value supplied in the 'from' clause to be stored in camel -->
     	</route>
-
+    	
   </camelContext>
 
 </beans>
