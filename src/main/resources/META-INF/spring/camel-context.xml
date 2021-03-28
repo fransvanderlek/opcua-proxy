@@ -33,6 +33,7 @@
 
 		<from uri="milo-client:opc.tcp://milo.digitalpetri.com:62541/milo?node=RAW(ns=2;s=Dynamic/RandomDouble)&amp;samplingInterval=100&amp;allowedSecurityPolicies=None" />
        <!-- <log message="${body}" /> -->
+       <marshal><custom ref="gson"/></marshal>
        <convertBodyTo type="java.lang.String"/>
         <to uri="paho:IntelligentIndustryExperience/robot2/status?brokerUrl=tcp://test.mosquitto.org:1883"/>
 </route>
